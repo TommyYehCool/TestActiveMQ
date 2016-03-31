@@ -1,0 +1,6 @@
+/target/
+/log/
+/activemq-data/
+/.settings/
+.classpath
+.project
