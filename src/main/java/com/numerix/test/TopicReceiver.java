@@ -35,13 +35,13 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 			mClientId = name + "_id";
 			switch (name) {
 				case "Tommy":
-					mMessageSelector = "action='sport'";
-					mNameUsedToIdentifyThisSubscription = name + "_sport_news";
+					mMessageSelector = "news='sport'";
+					mNameUsedToIdentifyThisSubscription = "sport_news";
 					break;
 					
 				case "Alice":
-					mMessageSelector = "action='shopping'";
-					mNameUsedToIdentifyThisSubscription = name + "_shopping_news";
+					mMessageSelector = "news='shopping'";
+					mNameUsedToIdentifyThisSubscription = "shopping_news";
 					break;
 			}
 			
@@ -76,7 +76,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		consumer = session.createDurableSubscriber(topic, mNameUsedToIdentifyThisSubscription, mMessageSelector, true);
 		consumer.setMessageListener(this);
 		
-		System.out.println("Create consumer to topic: " + TOPIC_NAME + " succeed");
+		System.out.println("Create consumer to topic: <" + TOPIC_NAME + "> with name: <" + mNameUsedToIdentifyThisSubscription + "> by messageSelector: <" + mMessageSelector + "> succeed");
 	}
 	
 	private void stop() {

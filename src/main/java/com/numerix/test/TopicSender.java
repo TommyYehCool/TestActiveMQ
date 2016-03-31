@@ -56,15 +56,15 @@ public class TopicSender {
 		
 		String sMsg = null;
 		TextMessage message = null;
-		String key = "action";
+		String key = "news";
 		String value = null;
 		for (int i = 0; i < 10; i++) {
 			if (i % 2 == 0) {
-				sMsg = "Rocket Win-" + i;
+				sMsg = "Jeremy Lin score for " + i;
 				value = "sport";
 			}
 			else {
-				sMsg = "On Sale-" + i;
+				sMsg = "H&M on sale-" + i;
 				value = "shopping";
 			}
 			message = session.createTextMessage(sMsg);
