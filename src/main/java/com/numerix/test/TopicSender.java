@@ -52,35 +52,37 @@ public class TopicSender {
 	}
 
 	private void startToSendMessage() throws JMSException {
+		pressAnyKeyToContinue();
+		
+		String sMsg = null;
+		TextMessage message = null;
+		String key = "action";
+		String value = null;
 		for (int i = 0; i < 10; i++) {
-			String sMsg = null;
-			TextMessage message = null;
 			if (i % 2 == 0) {
 				sMsg = "Rocket Win-" + i;
-				message = session.createTextMessage(sMsg);
-				message.setStringProperty("action", "sport");
+				value = "sport";
 			}
 			else {
 				sMsg = "On Sale-" + i;
-				message = session.createTextMessage(sMsg);
-				message.setStringProperty("action", "shopping");
+				value = "shopping";
 			}
+			message = session.createTextMessage(sMsg);
+			message.setStringProperty(key, value);
+
 			producer.send(message);
 			
-			System.out.println(">>>>> Sent message: <" + sMsg + "> to topic: <" + TOPIC_NAME + ">");
+			System.out.println(">>>>> Sent message: <" + sMsg + "> to topic: <" + TOPIC_NAME + "> with key: <" + key + "> value: <" + value + ">");
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (i % 5 == 0) {
-				pressAnyKeyToContinue();
-			}
 		}
 	}
 
 	private void pressAnyKeyToContinue() {
-		System.out.println("Press any key to continue...");
+		System.out.println("Press any key to send topic messages...");
 		try {
 			System.in.read();
 		} catch (Exception e) {

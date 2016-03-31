@@ -15,7 +15,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 public class TopicReceiver implements ExceptionListener, MessageListener {
 
 	private String mClientId;
-	private String mSubscriberName;
+	private String mNameUsedToIdentifyThisSubscription;
 	private String mMessageSelector;
 	
 	private Connection connection;
@@ -33,14 +33,15 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 			}
 			
 			mClientId = name + "_id";
-			mSubscriberName = name + "_name";
 			switch (name) {
 				case "Tommy":
-					mMessageSelector = "action=sport";
+					mMessageSelector = "action='sport'";
+					mNameUsedToIdentifyThisSubscription = name + "_sport_news";
 					break;
 					
 				case "Alice":
-					mMessageSelector = "action=shopping";
+					mMessageSelector = "action='shopping'";
+					mNameUsedToIdentifyThisSubscription = name + "_shopping_news";
 					break;
 			}
 			
@@ -72,7 +73,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		// Create the destination (Topic or Queue)
 		Topic topic = session.createTopic(TOPIC_NAME);
 
-		consumer = session.createDurableSubscriber(topic, mSubscriberName, mMessageSelector, true);
+		consumer = session.createDurableSubscriber(topic, mNameUsedToIdentifyThisSubscription, mMessageSelector, true);
 		consumer.setMessageListener(this);
 		
 		System.out.println("Create consumer to topic: " + TOPIC_NAME + " succeed");
@@ -101,9 +102,9 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		try {
 			if (message instanceof TextMessage) {
 				TextMessage textMessage = (TextMessage) message;
-				System.out.println("<<<<< Topic TextMessage received: " + textMessage.getText());
+				System.out.println("<<<<< Topic TextMessage received: <" + textMessage.getText() + ">");
 			} else {
-				System.out.println("<<<<< Topic message received: " + message);
+				System.out.println("<<<<< Topic message received: <" + message + ">");
 			}
 		} catch (JMSException e) {
 			System.err.println("JMSException raised while receiving message, err-msg: " + e.toString());
