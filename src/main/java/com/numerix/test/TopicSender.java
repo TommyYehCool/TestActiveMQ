@@ -1,5 +1,7 @@
 package com.numerix.test;
 
+import java.io.IOException;
+
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
@@ -41,17 +43,16 @@ public class TopicSender {
 
 		// Create the destination (Topic or Queue)
 		Topic topic = session.createTopic(TOPIC_NAME);
-		
+
 		// Create a MessageProducer from the Session to the Topic or Queue
 		producer = session.createProducer(topic);
 		/**
-		 * [PERSISTANCE] 
-		 * 1. In non persistance case, the data will lose while the Broker is shutdown 
-		 * 2. Default is Persistent
+		 * [PERSISTANCE] 1. In non persistance case, the data will lose while
+		 * the Broker is shutdown 2. Default is Persistent
 		 */
 		// producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
-	
+
 	private void startToSendMessage() throws JMSException {
 		int processId = CommonUtil.getProcessId();
 
@@ -66,9 +67,20 @@ public class TopicSender {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			if (seq % 5 == 0) {
+				pressAnyKeyToContinue();
+			}
 		}
 	}
-	
+
+	private void pressAnyKeyToContinue() {
+		System.out.println("Press any key to continue...");
+		try {
+			System.in.read();
+		} catch (Exception e) {
+		}
+	}
+
 	private void stop() {
 		try {
 			if (producer != null) {
