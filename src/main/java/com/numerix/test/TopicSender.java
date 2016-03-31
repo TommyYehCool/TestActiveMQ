@@ -1,7 +1,5 @@
 package com.numerix.test;
 
-import java.io.IOException;
-
 import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
@@ -54,20 +52,28 @@ public class TopicSender {
 	}
 
 	private void startToSendMessage() throws JMSException {
-		int processId = CommonUtil.getProcessId();
-
-		long seq = 0;
-		while (seq < 99999) {
-			String sMsg = processId + "-" + String.valueOf(seq++);
-			TextMessage message = session.createTextMessage(sMsg);
+		for (int i = 0; i < 10; i++) {
+			String sMsg = null;
+			TextMessage message = null;
+			if (i % 2 == 0) {
+				sMsg = "Rocket Win-" + i;
+				message = session.createTextMessage(sMsg);
+				message.setStringProperty("action", "sport");
+			}
+			else {
+				sMsg = "On Sale-" + i;
+				message = session.createTextMessage(sMsg);
+				message.setStringProperty("action", "shopping");
+			}
 			producer.send(message);
+			
 			System.out.println(">>>>> Sent message: <" + sMsg + "> to topic: <" + TOPIC_NAME + ">");
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (seq % 5 == 0) {
+			if (i % 5 == 0) {
 				pressAnyKeyToContinue();
 			}
 		}

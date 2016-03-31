@@ -36,11 +36,11 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 			mSubscriberName = name + "_name";
 			switch (name) {
 				case "Tommy":
-					mMessageSelector = "sport";
+					mMessageSelector = "action=sport";
 					break;
 					
 				case "Alice":
-					mMessageSelector = "shopping";
+					mMessageSelector = "action=shopping";
 					break;
 			}
 			
