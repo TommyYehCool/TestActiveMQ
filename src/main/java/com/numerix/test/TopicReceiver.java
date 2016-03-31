@@ -13,6 +13,10 @@ import javax.jms.Topic;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class TopicReceiver implements ExceptionListener, MessageListener {
+
+	private String mClientId;
+	private String mSubscriberName;
+	private String mMessageSelector;
 	
 	private Connection connection;
 	private Session session;
@@ -22,19 +26,33 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 
 	private void start() {
 		try {
-			String clientId = System.getProperty("client-id");
-			if (clientId == null) {
-				System.err.println("Please check your VM arguments has property -Dclient-id");
+			String name = System.getProperty("name");
+			if (name == null) {
+				System.err.println("Please check your VM arguments has property -Dname");
 				System.exit(1);
 			}
-			createConnection(clientId);
-		} catch (JMSException e) {
+			
+			mClientId = name + "_id";
+			mSubscriberName = name + "_name";
+			switch (name) {
+				case "Tommy":
+					mMessageSelector = "sport";
+					break;
+					
+				case "Alice":
+					mMessageSelector = "shopping";
+					break;
+			}
+			
+			createConnection();
+		} 
+		catch (JMSException e) {
 			System.err.println("JMSException raised while creating connection, err-msg: " + e.toString());
 			stop();
 		}
 	}
 
-	private void createConnection(String clientId) throws JMSException {
+	private void createConnection() throws JMSException {
 		// Create a ConnectionFactory
 		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(Constant.BROKER_URL);
 
@@ -42,7 +60,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		connection = connectionFactory.createConnection();
 
 		/** [DRUABLE] if you want durable you should configure client id */
-		connection.setClientID(clientId);
+		connection.setClientID(mClientId);
 		connection.setExceptionListener(this);
 		connection.start();
 		System.out.println("Create connection succeed");
@@ -54,7 +72,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		// Create the destination (Topic or Queue)
 		Topic topic = session.createTopic(TOPIC_NAME);
 
-		consumer = session.createDurableSubscriber(topic, clientId);
+		consumer = session.createDurableSubscriber(topic, mSubscriberName, mMessageSelector, true);
 		consumer.setMessageListener(this);
 		
 		System.out.println("Create consumer to topic: " + TOPIC_NAME + " succeed");
