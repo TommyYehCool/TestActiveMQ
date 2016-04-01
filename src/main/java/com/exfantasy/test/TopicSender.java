@@ -1,4 +1,4 @@
-package com.numerix.test;
+package com.exfantasy.test;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;

@@ -1,4 +1,4 @@
-package com.numerix.test;
+package com.exfantasy.test;
 
 import java.lang.management.ManagementFactory;
 
