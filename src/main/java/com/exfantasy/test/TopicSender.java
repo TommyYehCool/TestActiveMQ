@@ -51,7 +51,7 @@ public class TopicSender {
 		 * 1. In non persistance case, the data will lose while the Broker is shutdown 
 		 * 2. Default is Persistent
 		 */
-		// producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+//		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
 
 	private void startToSendMessage() throws JMSException {
