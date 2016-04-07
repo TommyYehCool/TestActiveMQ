@@ -11,6 +11,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class TopicSender {
 
+	private String mClientId = "NewsProducer-ToT";
 	private Connection connection;
 	private Session session;
 	private MessageProducer producer;
@@ -23,7 +24,7 @@ public class TopicSender {
 
 			startToSendMessage();
 		} catch (JMSException e) {
-			System.err.println("JMSException raised, err-msg: " + e.toString());
+			System.err.println("Creating connection or sending message with JMSException raised, err-msg: " + e.getMessage());
 			stop();
 		}
 	}
@@ -34,6 +35,7 @@ public class TopicSender {
 
 		// Create a Connection
 		connection = connectionFactory.createConnection();
+		connection.setClientID(mClientId);
 		connection.start();
 
 		// Create a Session
@@ -97,7 +99,7 @@ public class TopicSender {
 				connection = null;
 			}
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while stoping related components, err-msg: " + e.toString());
+			System.err.println("Stoping related components with JMSException raised, err-msg: " + e.getMessage());
 		}
 	}
 

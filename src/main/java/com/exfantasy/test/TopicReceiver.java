@@ -32,7 +32,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 				System.exit(1);
 			}
 			
-			mClientId = name + "_id";
+			mClientId = name + "_T_Receiver_ClientId";
 			switch (name) {
 				case "Tommy":
 					mMessageSelector = "news='sport'";
@@ -48,7 +48,7 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 			createConnection();
 		} 
 		catch (JMSException e) {
-			System.err.println("JMSException raised while creating connection, err-msg: " + e.toString());
+			System.err.println("Creating connection with JMSException raised, err-msg: " + e.getMessage());
 			stop();
 		}
 	}
@@ -79,6 +79,19 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 		System.out.println("Create consumer to topic: <" + TOPIC_NAME + "> with name: <" + mNameUsedToIdentifyThisSubscription + "> by messageSelector: <" + mMessageSelector + "> succeed");
 	}
 	
+	public void onMessage(Message message) {
+		try {
+			if (message instanceof TextMessage) {
+				TextMessage textMessage = (TextMessage) message;
+				System.out.println("<<<<< Topic TextMessage received: <" + textMessage.getText() + ">");
+			} else {
+				System.out.println("<<<<< Topic message received: <" + message + ">");
+			}
+		} catch (JMSException e) {
+			System.err.println("Receiving message with JMSException raised, err-msg: " + e.getMessage());
+		}
+	}
+	
 	private void stop() {
 		try {
 			if (consumer != null) {
@@ -94,25 +107,12 @@ public class TopicReceiver implements ExceptionListener, MessageListener {
 				connection = null;
 			}
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while stoping related components, err-msg: " + e.toString());
-		}
-	}
-	
-	public void onMessage(Message message) {
-		try {
-			if (message instanceof TextMessage) {
-				TextMessage textMessage = (TextMessage) message;
-				System.out.println("<<<<< Topic TextMessage received: <" + textMessage.getText() + ">");
-			} else {
-				System.out.println("<<<<< Topic message received: <" + message + ">");
-			}
-		} catch (JMSException e) {
-			System.err.println("JMSException raised while receiving message, err-msg: " + e.toString());
+			System.err.println("Stoping related components with JMSException raised, err-msg: " + e.getMessage());
 		}
 	}
 
-	public void onException(JMSException ex) {
-		System.err.println("JMSException raised, err-msg: " + ex.toString());
+	public void onException(JMSException e) {
+		System.err.println("Connection onException with JMSException raised, err-msg: " + e.getMessage());
 	}
 	
 	public static void main(String[] args) {

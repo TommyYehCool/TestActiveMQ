@@ -1,7 +1,6 @@
 package com.exfantasy.test;
 
 import javax.jms.Connection;
-import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
@@ -12,6 +11,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class QueueSender {
 
+	private String mClientId = "NewsProducer-ToQ";
 	private Connection connection;
 	private Session session;
 	private MessageProducer producer;
@@ -24,7 +24,7 @@ public class QueueSender {
 
 			startToSendMessage();
 		} catch (JMSException e) {
-			System.err.println("JMSException raised, err-msg: " + e.toString());
+			System.err.println("Creating connection or sending message with JMSException raised, err-msg: " + e.getMessage());
 			stop();
 		}
 	}
@@ -35,6 +35,7 @@ public class QueueSender {
 
 		// Create a Connection
 		connection = connectionFactory.createConnection();
+		connection.setClientID(mClientId);
 		connection.start();
 
 		// Create a Session
@@ -50,7 +51,7 @@ public class QueueSender {
 		 * 1. In non persistance case, the data will lose while the Broker is shutdown 
 		 * 2. Default is Persistent
 		 */
-		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+//		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
 
 	private void startToSendMessage() throws JMSException {
@@ -99,7 +100,7 @@ public class QueueSender {
 				connection = null;
 			}
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while stoping related components, err-msg: " + e.toString());
+			System.err.println("Stoping related components with JMSException raised, err-msg: " + e.getMessage());
 		}
 	}
 

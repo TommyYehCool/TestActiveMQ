@@ -13,6 +13,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class QueueReceiver implements ExceptionListener {
 	
+	private String mClientId;
 	private String mMessageSelector;
 
 	private Connection connection;
@@ -29,6 +30,7 @@ public class QueueReceiver implements ExceptionListener {
 				System.exit(1);
 			}
 			
+			mClientId = name + "_Q_Receiver_ClientId";
 			switch (name) {
 				case "Tommy":
 					mMessageSelector = "news='sport'";
@@ -42,7 +44,7 @@ public class QueueReceiver implements ExceptionListener {
 			createConnection();
 			
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while creating connection, err-msg: " + e.toString());
+			System.err.println("Creating connection with JMSException raised, err-msg: " + e.getMessage());
 			stop();
 		}
 
@@ -55,6 +57,7 @@ public class QueueReceiver implements ExceptionListener {
 
 		// Create a Connection
 		connection = connectionFactory.createConnection();
+		connection.setClientID(mClientId);
 		connection.setExceptionListener(this);
 		connection.start();
 		System.out.println("Create connection succeed");
@@ -75,6 +78,8 @@ public class QueueReceiver implements ExceptionListener {
 
 	private void startToReceiveMessage() {
 		try {
+			System.out.println(">>>>> Staring to receive message");
+			
 			// Wait for a message
 			while (true) {
 //				Message message = consumer.receive(5000);
@@ -82,13 +87,13 @@ public class QueueReceiver implements ExceptionListener {
 				if (message instanceof TextMessage) {
 					TextMessage textMessage = (TextMessage) message;
 					String text = textMessage.getText();
-					System.out.println("<<<<< TextMessage Received: <" + text + ">");
+					System.out.println("<<<<< Queue TextMessage received: <" + text + ">");
 				} else {
-					System.out.println("<<<<< Message Received: <" + message + ">");
+					System.out.println("<<<<< Queue message received: <" + message + ">");
 				}
 			}
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while receiving message, err-msg: " + e.toString());
+			System.err.println("Receiving message with JMSException raised, err-msg: " + e.getMessage());
 		}
 	}
 
@@ -107,12 +112,12 @@ public class QueueReceiver implements ExceptionListener {
 				connection = null;
 			}
 		} catch (JMSException e) {
-			System.err.println("JMSException raised while stoping related components, err-msg: " + e.toString());
+			System.err.println("Stoping related components with JMSException raised, err-msg: " + e.getMessage());
 		}
 	}
 
-	public void onException(JMSException ex) {
-		System.err.println("JMSException raised, err-msg: " + ex.toString());
+	public void onException(JMSException e) {
+		System.err.println("Connection onException with JMSException raised, err-msg: " + e.getMessage());
 	}
 
 	public static void main(String[] args) {
