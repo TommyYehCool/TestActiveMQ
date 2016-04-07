@@ -45,6 +45,11 @@ public class QueueSender {
 
 		// Create a MessageProducer from the Session to the Topic or Queue
 		producer = session.createProducer(destination);
+		/**
+		 * [PERSISTANCE] 
+		 * 1. In non persistance case, the data will lose while the Broker is shutdown 
+		 * 2. Default is Persistent
+		 */
 		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
 
