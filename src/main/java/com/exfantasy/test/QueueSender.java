@@ -49,13 +49,27 @@ public class QueueSender {
 	}
 
 	private void startToSendMessage() throws JMSException {
-		int processId = CommonUtil.getProcessId();
+		CommonUtil.pressAnyKeyToContinue();
 
-		long seq = 0;
-		while (seq < 99999) {
-			String sMsg = processId + "-" + String.valueOf(seq++);
-			TextMessage message = session.createTextMessage(sMsg);
+		String sMsg = null;
+		TextMessage message = null;
+		String key = "news";
+		String value = null;
+		
+		for (int i = 0; i < 10; i++) {
+			if (i % 2 == 0) {
+				sMsg = "Jeremy Lin score for " + i;
+				value = "sport";
+			}
+			else {
+				sMsg = "H&M on sale-" + i;
+				value = "shopping";
+			}
+			message = session.createTextMessage(sMsg);
+			message.setStringProperty(key, value);
+
 			producer.send(message);
+
 			System.out.println(">>>>> Sent message: <" + sMsg + "> to queue: <" + QUEUE_NAME + ">");
 			try {
 				Thread.sleep(1000);

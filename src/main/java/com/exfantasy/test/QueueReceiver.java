@@ -12,6 +12,8 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class QueueReceiver implements ExceptionListener {
+	
+	private String mMessageSelector;
 
 	private Connection connection;
 	private Session session;
@@ -21,7 +23,24 @@ public class QueueReceiver implements ExceptionListener {
 
 	private void start() {
 		try {
+			String name = System.getProperty("name");
+			if (name == null) {
+				System.err.println("Please check your VM arguments has property -Dname");
+				System.exit(1);
+			}
+			
+			switch (name) {
+				case "Tommy":
+					mMessageSelector = "news='sport'";
+					break;
+					
+				case "Alice":
+					mMessageSelector = "news='shopping'";
+					break;
+			}
+			
 			createConnection();
+			
 		} catch (JMSException e) {
 			System.err.println("JMSException raised while creating connection, err-msg: " + e.toString());
 			stop();
@@ -48,22 +67,24 @@ public class QueueReceiver implements ExceptionListener {
 		Destination destination = session.createQueue(QUEUE_NAME);
 
 		// Create a MessageConsumer from the Session to the Topic or Queue
-		consumer = session.createConsumer(destination);
+//		consumer = session.createConsumer(destination);
+		consumer = session.createConsumer(destination, mMessageSelector);
 
-		System.out.println("Create consumer to queue: " + QUEUE_NAME + " succeed");
+		System.out.println("Create consumer to queue: " + QUEUE_NAME + " with message selector: " + mMessageSelector + " succeed");
 	}
 
 	private void startToReceiveMessage() {
 		try {
 			// Wait for a message
 			while (true) {
-				Message message = consumer.receive(5000);
+//				Message message = consumer.receive(5000);
+				Message message = consumer.receive();
 				if (message instanceof TextMessage) {
 					TextMessage textMessage = (TextMessage) message;
 					String text = textMessage.getText();
-					System.out.println("<<<<< TextMessage Received: " + text);
+					System.out.println("<<<<< TextMessage Received: <" + text + ">");
 				} else {
-					System.out.println("<<<<< Message Received: " + message);
+					System.out.println("<<<<< Message Received: <" + message + ">");
 				}
 			}
 		} catch (JMSException e) {

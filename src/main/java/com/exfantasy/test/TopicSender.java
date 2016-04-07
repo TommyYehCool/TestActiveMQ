@@ -52,7 +52,7 @@ public class TopicSender {
 	}
 
 	private void startToSendMessage() throws JMSException {
-		pressAnyKeyToContinue();
+		CommonUtil.pressAnyKeyToContinue();
 		
 		String sMsg = null;
 		TextMessage message = null;
@@ -78,14 +78,6 @@ public class TopicSender {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-
-	private void pressAnyKeyToContinue() {
-		System.out.println("Press any key to send topic messages...");
-		try {
-			System.in.read();
-		} catch (Exception e) {
 		}
 	}
 
